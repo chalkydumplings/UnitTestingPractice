@@ -1,0 +1,8 @@
+title: Python Unit-Testing Course
+language: English
+summary: An introductory interactive course about unit testing in Python.
+programming_language: Python
+content:
+- Introduction
+- Assertion Types
+mode: Study

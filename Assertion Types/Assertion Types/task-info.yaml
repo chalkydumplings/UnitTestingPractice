@@ -1,0 +1,302 @@
+type: edu
+files:
+- name: truthiness.py
+  visible: true
+  placeholders:
+  - offset: 169
+    length: 19
+    placeholder_text: write this test!
+    initial_state:
+      length: 16
+      offset: 169
+    initialized_from_dependency: false
+    possible_answer: self.assertFalse(0)
+    selected: true
+    status: Solved
+  - offset: 290
+    length: 18
+    placeholder_text: write this test!
+    initial_state:
+      length: 16
+      offset: 287
+    initialized_from_dependency: false
+    possible_answer: self.assertTrue(1)
+    selected: true
+    status: Solved
+  - offset: 416
+    length: 18
+    placeholder_text: write this test!
+    initial_state:
+      length: 16
+      offset: 411
+    initialized_from_dependency: false
+    possible_answer: self.assertTrue(3)
+    selected: true
+    status: Solved
+  - offset: 569
+    length: 6
+    placeholder_text: MethodName
+    initial_state:
+      length: 10
+      offset: 563
+    initialized_from_dependency: false
+    possible_answer: False
+    selected: false
+    status: Solved
+  - offset: 897
+    length: 5
+    placeholder_text: choose the proper assetion method
+    initial_state:
+      length: 33
+      offset: 895
+    initialized_from_dependency: false
+    possible_answer: False
+    selected: true
+    status: Solved
+  - offset: 939
+    length: 4
+    placeholder_text: choose the proper assetion method
+    initial_state:
+      length: 33
+      offset: 965
+    initialized_from_dependency: false
+    possible_answer: True
+    selected: true
+    status: Solved
+  - offset: 999
+    length: 38
+    placeholder_text: implement this test using _test_container_class()
+    initial_state:
+      length: 49
+      offset: 1054
+    initialized_from_dependency: false
+    possible_answer: self._test_container_class([], [False])
+    selected: true
+    status: Solved
+  - offset: 1073
+    length: 39
+    placeholder_text: implement this test using _test_container_class()
+    initial_state:
+      length: 49
+      offset: 1139
+    initialized_from_dependency: false
+    possible_answer: self._test_container_class((), (False,))
+    selected: true
+    status: Solved
+  - offset: 1146
+    length: 41
+    placeholder_text: implement this test using _test_container_class()
+    initial_state:
+      length: 49
+      offset: 1222
+    initialized_from_dependency: false
+    possible_answer: self._test_container_class(set(), {False})
+    selected: true
+    status: Solved
+  - offset: 1222
+    length: 44
+    placeholder_text: implement this test using _test_container_class()
+    initial_state:
+      length: 49
+      offset: 1306
+    initialized_from_dependency: false
+    possible_answer: 'self._test_container_class({}, {False: False})'
+    selected: true
+    status: Solved
+  text: |
+    import unittest
+
+
+    class TestIntegerTruthiness(unittest.TestCase):
+        def test_zero(self):
+            """check that the thruthiness of the integer zero is False"""
+            write this test!
+
+        def test_one(self):
+            """check that the thruthiness of the integer one is True"""
+            write this test!
+
+        def test_other_value(self):
+            """check the thruthiness of an integer other than zero"""
+            write this test!
+
+
+    class TestNoneTruthiness(unittest.TestCase):
+        def test_none(self):
+            """check the thruthiness of None"""
+            self.assertMethodName(None)
+
+
+    class TestContainerTruthiness(unittest.TestCase):
+        # Note:
+        # -----
+        # Methods whose name starts with "_test" are not considered test methods,
+        # just like all methods whose name doesn't begin with "test".
+
+        def _test_container_class(self, empty_container, non_empty_container):
+            self.assertchoose the proper assetion method(empty_container)
+            self.assertchoose the proper assetion method(non_empty_container)
+
+        def test_list(self):
+            implement this test using _test_container_class()
+
+        def test_tuple(self):
+            implement this test using _test_container_class()
+
+        def test_set(self):
+            implement this test using _test_container_class()
+
+        def test_dict(self):
+            implement this test using _test_container_class()
+  learner_created: false
+- name: tests.py
+  visible: false
+  text: |
+    import functools
+    import unittest
+    import unittest.mock
+
+    from custom_test_helpers import inspect_assertions, run_test_case_tests, normalize_call_args
+    from test_helper import run_common_tests, test_answer_placeholders_text_deleted, import_task_file, passed, failed, \
+        get_answer_placeholders
+
+
+    def check_integer_truthiness_tests():
+        task_module = import_task_file()
+        TestIntegerTruthiness = inspect_assertions(task_module.TestIntegerTruthiness)
+        test_result = run_test_case_tests(TestIntegerTruthiness)
+
+        if not test_result.wasSuccessful():
+            failed("Some of the TestIntegerTruthiness tests failed!")
+
+        placeholder_windows = get_answer_placeholders()[0:3]
+        test_zero_window, test_one_window, test_other_value_window = placeholder_windows
+
+        # check test_zero
+        n_assertions = TestIntegerTruthiness.get_test_method_total_call_count("test_zero")
+        test_name = "TestIntegerTruthiness.test_zero"
+        if n_assertions > 1:
+            failed(name=test_name, message="must use only one assertion")
+        elif n_assertions == 0:
+            failed(name=test_name, message="must use an assertion")
+        elif unittest.mock.call(0) in TestIntegerTruthiness.per_method_counters["test_zero"]["assertFalse"].call_args_list:
+            passed(name=test_name)
+        else:
+            failed(name=test_name)
+
+        # check test_one
+        n_assertions = TestIntegerTruthiness.get_test_method_total_call_count("test_one")
+        test_name = "TestIntegerTruthiness.test_one"
+        if n_assertions > 1:
+            failed(name=test_name, message="must use only one assertion")
+        elif n_assertions == 0:
+            failed(name=test_name, message="must use an assertion")
+        elif unittest.mock.call(1) in TestIntegerTruthiness.per_method_counters["test_one"]["assertTrue"].call_args_list:
+            passed(name=test_name)
+        else:
+            failed(name=test_name)
+
+        # check test_other_value
+        wrapped_assertTrue = TestIntegerTruthiness.per_method_counters["test_other_value"]["assertTrue"]
+        n_assertions = TestIntegerTruthiness.get_test_method_total_call_count("test_other_value")
+        test_name = "TestIntegerTruthiness.test_other_value"
+        if n_assertions > 1:
+            failed(name=test_name, message="must use only one assertion")
+        elif n_assertions == 0:
+            failed(name=test_name, message="must use an assertion")
+        elif (
+                "self.assertTrue" in test_other_value_window and
+                wrapped_assertTrue.call_count > 0 and
+                isinstance(wrapped_assertTrue.call_args[0][0], int) and
+                wrapped_assertTrue.call_args[0][0] not in {0, 1}
+        ):
+            passed(name=test_name)
+        else:
+            failed(name=test_name)
+
+
+    def check_none_truthiness_tests():
+        task_module = import_task_file()
+        TestNoneTruthiness = inspect_assertions(task_module.TestNoneTruthiness)
+        test_result = run_test_case_tests(TestNoneTruthiness)
+
+        if not test_result.wasSuccessful():
+            failed("Some of the TestIntegerTruthiness tests failed!")
+
+        wrapped_assertFalse = TestNoneTruthiness.per_method_counters["test_none"]["assertFalse"]
+
+        n_assertions = TestNoneTruthiness.get_test_method_total_call_count("test_none")
+        test_name = "TestNoneTruthiness.test_none"
+        if n_assertions > 1:
+            failed(name=test_name, message="must use only one assertion")
+        elif n_assertions == 0:
+            failed(name=test_name, message="must use an assertion")
+        elif unittest.mock.call(None) in TestNoneTruthiness.per_method_counters["test_none"]["assertFalse"].call_args_list:
+            passed(name=test_name)
+        else:
+            failed(name=test_name)
+
+
+    def check_test_container_class_assertion_methods():
+        window1, window2 = get_answer_placeholders()[4:6]
+        if window1 == 'False' and window2 == 'True':
+            passed()
+        else:
+            failed()
+
+
+    def conditional_passed_or_failed(condition, name):
+        if condition:
+            passed(name=name)
+        else:
+            failed(name=name)
+
+
+    def check_container_truthiness_tests():
+        task_module = import_task_file()
+        test_case_class = inspect_assertions(task_module.TestContainerTruthiness)
+        test_result = run_test_case_tests(test_case_class)
+
+        conditional_passed_or_failed(test_result.wasSuccessful(), "TestContainerTruthiness tests pass")
+
+        for (test_method_name, empty_container) in [
+            ("test_list", []),
+            ("test_tuple", ()),
+            ("test_set", set()),
+            ("test_dict", {}),
+        ]:
+            calls = test_case_class.per_method_counters[test_method_name]["assertFalse"].call_args_list
+            normalized_calls = [
+                normalize_call_args(c, func=functools.partial(test_case_class.assertFalse, None))
+                for c in calls
+            ]
+            conditional_passed_or_failed(
+                condition=any(args[0] == empty_container for args, kwargs in normalized_calls),
+                name="{} properly tested empty container".format(test_method_name),
+            )
+
+            calls = test_case_class.per_method_counters[test_method_name]["assertTrue"].call_args_list
+            normalized_calls = [
+                normalize_call_args(c, func=functools.partial(test_case_class.assertTrue, None))
+                for c in calls
+            ]
+            conditional_passed_or_failed(
+                condition=any(
+                    type(args[0]) == type(empty_container) and args[0] != empty_container
+                    for args, kwargs in normalized_calls
+                ),
+                name="{} properly tested non-empty container".format(test_method_name),
+            )
+
+
+    if __name__ == '__main__':
+        run_common_tests()
+        test_answer_placeholders_text_deleted()
+
+        check_integer_truthiness_tests()
+        check_none_truthiness_tests()
+        check_test_container_class_assertion_methods()
+        check_container_truthiness_tests()
+  learner_created: false
+status: Solved
+record: -1

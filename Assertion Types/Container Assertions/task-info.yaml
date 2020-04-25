@@ -1,0 +1,278 @@
+type: edu
+files:
+- name: container_assertions.py
+  visible: true
+  placeholders:
+  - offset: 1970
+    length: 20
+    placeholder_text: implement this test!
+    initial_state:
+      length: 20
+      offset: 1970
+    initialized_from_dependency: false
+    possible_answer: self.assertCountEqual(random_shuffle([]), [])
+    selected: false
+    status: Unchecked
+  - offset: 2136
+    length: 20
+    placeholder_text: implement this test!
+    initial_state:
+      length: 20
+      offset: 2136
+    initialized_from_dependency: false
+    possible_answer: |-
+      values = [1, 1, 1, 1]
+              self.assertEqual(len(random_shuffle(values)), 4)
+    selected: false
+    status: Unchecked
+  - offset: 2294
+    length: 20
+    placeholder_text: implement this test!
+    initial_state:
+      length: 20
+      offset: 2294
+    initialized_from_dependency: false
+    possible_answer: |-
+      values = [1, 1, 1, 1]
+              self.assertCountEqual(random_shuffle(values), values)
+    selected: false
+    status: Unchecked
+  - offset: 2481
+    length: 20
+    placeholder_text: implement this test!
+    initial_state:
+      length: 20
+      offset: 2481
+    initialized_from_dependency: false
+    possible_answer: |-
+      values = list(range(100))
+              values_copy = values.copy()
+              self.assertNotEqual(random_shuffle(values), values_copy)
+    selected: false
+    status: Unchecked
+  - offset: 2639
+    length: 20
+    placeholder_text: implement this test!
+    initial_state:
+      length: 20
+      offset: 2639
+    initialized_from_dependency: false
+    possible_answer: |-
+      values = list(range(100))
+              random_shuffle(values)
+              self.assertEqual(values, list(range(100)))
+    selected: false
+    status: Unchecked
+  text: |
+    import unittest
+    import random
+
+
+    def random_shuffle(values):
+        """return a new list of the given values in random order"""
+        new_values = list(values)
+        random.shuffle(new_values)
+        return new_values
+
+
+    def broken_shuffle_1(values):
+        """this doesn't actually shuffle anything!"""
+        return list(values)
+
+
+    def broken_shuffle_2(values):
+        """this returns a single instance of each value, shuffled"""
+        new_values = list(set(values))
+        random.shuffle(new_values)
+        return new_values
+
+
+    def broken_shuffle_3(values):
+        """this always returns the values sorted"""
+        return list(sorted(values))
+
+
+    def broken_shuffle_4(values):
+        """this shuffles the values and returns a new list, but also changes the given list"""
+        random.shuffle(values)
+        return list(values)
+
+
+    def broken_shuffle_5(values):
+        """this shuffles the given list of values and returns it"""
+        random.shuffle(values)
+        return values
+
+
+    def broken_shuffle_6(values):
+        """this returns a list of the same length but with unrelated values"""
+        new_values = list(range(len(values)))
+        random.shuffle(new_values)
+        return new_values
+
+
+    def broken_shuffle_7(values):
+        """this is broken in a hard to find way..."""
+        new_values = []
+        while True:
+            value_index = random.randrange(0, len(values))
+            new_values.append(values.pop(value_index))
+            if len(values) == 0:
+                break
+        return new_values
+
+
+    class TestRandomShuffle(unittest.TestCase):
+        """unit tests for the random_shuffle() function"""
+
+        # IMPORTANT NOTE !!!
+        # In these tests, just call the random_shuffle() function
+        # when you want to call the tested function. Never call any
+        # of the "broken_..." functions; those are just here for you
+        # to look at. Don't worry, the tests will be run with them as
+        # well, using some deep magic ;)
+
+        def test_empty(self):
+            """check that giving an empty list results in an empty list"""
+            print("empty")
+            implement this test!
+
+        def test_same_length(self):
+            """check that the returned list is of the same length as the one givne"""
+            print("same")
+            implement this test!
+
+        def test_same_values(self):
+            """check that the values in the return list are the same"""
+            print("same value")
+            implement this test!
+
+        def test_values_are_shuffled(self):
+            """check that the function does actually return the values in a different order"""
+            print("shuffled")
+            implement this test!
+
+        def test_input_not_mutated(self):
+            """check that the input list of values is not mutated"""
+            print("mutated")
+            implement this test!
+  learner_created: false
+- name: tests.py
+  visible: false
+  text: |
+    from custom_test_helpers import check_tests_pass, get_test_method_names, \
+        run_test_case_tests
+    from test_helper import passed, failed, run_common_tests, \
+        test_answer_placeholders_text_deleted, import_task_file
+
+
+    def check_tests_fail_on_broken_implementations():
+        expected_results = {
+            'broken_shuffle_1': {
+                'test_empty': True,
+                'test_same_length': True,
+                'test_same_values': True,
+                'test_values_are_shuffled': False,
+                'test_input_not_mutated': True,
+            },
+            'broken_shuffle_2': {
+                'test_empty': True,
+                'test_same_length': False,
+                'test_same_values': False,
+                'test_values_are_shuffled': None,
+                'test_input_not_mutated': True,
+            },
+            'broken_shuffle_3': {
+                'test_empty': True,
+                'test_same_length': True,
+                'test_same_values': True,
+                'test_values_are_shuffled': False,
+                'test_input_not_mutated': True,
+            },
+            'broken_shuffle_4': {
+                'test_empty': True,
+                'test_same_length': True,
+                'test_same_values': True,
+                'test_values_are_shuffled': True,
+                'test_input_not_mutated': False,
+            },
+            'broken_shuffle_5': {
+                'test_empty': True,
+                'test_same_length': True,
+                'test_same_values': True,
+                'test_values_are_shuffled': None,
+                'test_input_not_mutated': False,
+            },
+            'broken_shuffle_6': {
+                'test_empty': True,
+                'test_same_length': True,
+                'test_same_values': False,
+                'test_values_are_shuffled': None,
+                'test_input_not_mutated': True,
+            },
+            'broken_shuffle_7': {
+                'test_empty': False,
+                'test_same_length': None,
+                'test_same_values': None,
+                'test_values_are_shuffled': None,
+                'test_input_not_mutated': False,
+            },
+        }
+
+        task_module = import_task_file()
+        orig_random_shuffle = task_module.random_shuffle
+        for broken_func_name in sorted(expected_results):
+            task_module.random_shuffle = getattr(task_module, broken_func_name)
+            test_result = run_test_case_tests(task_module.TestRandomShuffle)
+
+            test_method_name2failure = {
+                test_case.id().rsplit('.', 1)[1]: test_case
+                for (test_case, msg) in test_result.failures
+            }
+            test_method_name2error = {
+                test_case.id().rsplit('.', 1)[1]: test_case
+                for (test_case, msg) in test_result.errors
+            }
+            test_method_name2failure_or_error = {}
+            test_method_name2failure_or_error.update(test_method_name2failure)
+            test_method_name2failure_or_error.update(test_method_name2error)
+
+            has_failed = False
+            for test_method_name in get_test_method_names(task_module.TestRandomShuffle):
+                expected_result = expected_results[broken_func_name][test_method_name]
+                if expected_result is None:
+                    # ignore
+                    continue
+
+                is_error_or_failure = test_method_name in test_method_name2failure_or_error
+
+                if expected_result is True and is_error_or_failure:
+                    failed("{func_name} failed test {test_name}, which it should pass".format(
+                        func_name=broken_func_name,
+                        test_name="TestRandomShuffle."+test_method_name,
+                    ), name="test {}".format(broken_func_name))
+                    has_failed = True
+                    message = [x[1] for x in test_result.failures + test_result.errors if x[0].id().rsplit('.', 1)[1] == test_method_name][0]
+                    print(message)
+
+                elif expected_result is False and not is_error_or_failure:
+                    failed("{func_name} passed test {test_name}, which it should fail".format(
+                        func_name=broken_func_name,
+                        test_name="TestRandomShuffle."+test_method_name,
+                    ), name="test {}".format(broken_func_name))
+                    has_failed = True
+
+            if not has_failed:
+                passed(name="test {}".format(broken_func_name))
+
+        task_module.random_shuffle = orig_random_shuffle
+
+    if __name__ == '__main__':
+        run_common_tests()
+        test_answer_placeholders_text_deleted()
+
+        check_tests_pass(import_task_file())
+        check_tests_fail_on_broken_implementations()
+  learner_created: false
+status: Unchecked
+record: -1

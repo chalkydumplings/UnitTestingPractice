@@ -1,0 +1,92 @@
+type: edu
+files:
+- name: possible_test_results.py
+  visible: true
+  placeholders:
+  - offset: 100
+    length: 4
+    placeholder_text: write a test which will succeed
+    initial_state:
+      length: 31
+      offset: 100
+    initialized_from_dependency: false
+    possible_answer: pass
+    selected: true
+    status: Solved
+  - offset: 142
+    length: 30
+    placeholder_text: write a test which will fail
+    initial_state:
+      length: 28
+      offset: 169
+    initialized_from_dependency: false
+    possible_answer: self.assertEqual(True, False)
+    selected: true
+    status: Solved
+  - offset: 208
+    length: 15
+    placeholder_text: write a test which will cause an error
+    initial_state:
+      length: 38
+      offset: 233
+    initialized_from_dependency: false
+    possible_answer: raise Exception()
+    selected: true
+    status: Solved
+  text: |
+    import unittest
+
+
+    class TestPossibleResults(unittest.TestCase):
+        def test_success(self):
+            write a test which will succeed
+
+        def test_failure(self):
+            write a test which will fail
+
+        def test_error(self):
+            write a test which will cause an error
+  learner_created: false
+- name: tests.py
+  visible: false
+  text: |
+    from custom_test_helpers import run_module_tests
+    from test_helper import run_common_tests, test_answer_placeholders_text_deleted, import_task_file, passed, failed
+
+
+    if __name__ == '__main__':
+        run_common_tests()
+        test_answer_placeholders_text_deleted()
+
+        task_module = import_task_file()
+        test_result = run_module_tests(task_module)
+
+        if (
+            test_result.testsRun == 3 and
+            len(test_result.failures) == 1 and
+            len(test_result.errors) == 1
+        ):
+            passed("check number of successes, failures and errors")
+        else:
+            failed("check number of successes, failures and errors")
+
+        if not any(
+            "test_failure" in formatted_traceback
+            for test_case, formatted_traceback
+            in test_result.failures
+        ):
+            failed("test_failure should fail")
+        else:
+            passed("test_failure should fail")
+
+        if not any(
+            "test_error" in formatted_traceback
+            for test_case, formatted_traceback
+            in test_result.errors
+        ):
+            failed("test_error should cause an error")
+        else:
+            passed("test_error should cause an error")
+  learner_created: false
+status: Solved
+record: -1

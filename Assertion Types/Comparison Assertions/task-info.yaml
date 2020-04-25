@@ -1,0 +1,369 @@
+type: edu
+files:
+- name: comparison_assertions.py
+  visible: true
+  placeholders:
+  - offset: 312
+    length: 97
+    placeholder_text: write this test!
+    initial_state:
+      length: 16
+      offset: 312
+    initialized_from_dependency: false
+    possible_answer: |-
+      for n_attempt in range(100):
+                  value = random_not_42()
+                  self.assertNotEqual(value, 42)
+    selected: true
+    status: Solved
+  - offset: 1226
+    length: 16
+    placeholder_text: write this test!
+    initial_state:
+      length: 16
+      offset: 1146
+    initialized_from_dependency: false
+    possible_answer: self.assertIsNotNone(find_foo('foo'))
+    selected: false
+    status: Failed
+  - offset: 1368
+    length: 16
+    placeholder_text: write this test!
+    initial_state:
+      length: 16
+      offset: 1288
+    initialized_from_dependency: false
+    possible_answer: |-
+      for s in self.strings_with_foo:
+                  self.assertIsNotNone(find_foo(s))
+    selected: false
+    status: Failed
+  - offset: 1513
+    length: 16
+    placeholder_text: write this test!
+    initial_state:
+      length: 16
+      offset: 1433
+    initialized_from_dependency: false
+    possible_answer: |-
+      for s in self.strings_without_foo:
+                  self.assertIsNone(find_foo(s))
+    selected: false
+    status: Failed
+  - offset: 1867
+    length: 24
+    placeholder_text: check the returned value
+    initial_state:
+      length: 24
+      offset: 1787
+    initialized_from_dependency: false
+    possible_answer: |-
+      self.assertGreaterEqual(value, start)
+                  self.assertLessEqual(value, end)
+    selected: false
+    status: Failed
+  - offset: 2235
+    length: 24
+    placeholder_text: check the returned value
+    initial_state:
+      length: 24
+      offset: 2155
+    initialized_from_dependency: false
+    possible_answer: |-
+      self.assertGreater(value, start)
+                  self.assertLess(value, end)
+    selected: false
+    status: Failed
+  text: |
+    import random
+    import unittest
+
+    from tested_code import random_not_42, find_foo, \
+        random_float_between_inclusive, random_float_between_noninclusive
+
+
+    class TestRandomNot42(unittest.TestCase):
+        def test_many_values(self):
+            """call the function 100 times and make sure the result isn't 42"""
+            write this test!
+
+
+    class TestFindFoo(unittest.TestCase):
+        """tests for the find_foo() function
+
+        find_foo(s) returns an object if "foo" is a sub-string of s,
+        and None otherwise.
+        """
+        # valid_names = [
+        #     'foo',
+        #     'Bar',
+        #     'foorBar',
+        #     'foo_bar',
+        #     '_fooBar',
+        #     'foo1',
+        #     'foo_',
+        # ]
+        #
+        # invalid_names = [
+        #     '1foo',
+        #     'foo-bar',
+        #     '$foo',
+        #     'foo bar',
+        #     'foo+bar4ever',
+        # ]
+
+        strings_with_foo = [
+            'foo',
+            'aaa foo bbb',
+            'aaa foo',
+            'foo bbb',
+            'no foo for you, come back oen year!'
+        ]
+
+        strings_without_foo = [
+            'boo',
+            'aaa bbb',
+            'four',
+        ]
+
+        def test_identical(self):
+            """check that find_foo finds 'foo' in 'foo'"""
+            write this test!
+
+        def test_strings_with_foo(self):
+            """check that find_foo finds 'foo' in all of the strings with 'foo'"""
+            write this test!
+
+        def test_strings_without_foo(self):
+            """check that find_foo finds 'foo' in all of the strings with 'foo'"""
+            write this test!
+
+
+    class TestRandomFloatBetweenInclusive(unittest.TestCase):
+        def test_random_values(self):
+            for i in range(100):
+                start = random.random()
+                end = random.random()
+                if start > end:
+                    start, end = end, start
+                value = random_float_between_inclusive(start, end)
+
+                check the returned value
+
+
+    class TestRandomFloatBetweenNoninclusive(unittest.TestCase):
+        def test_random_values(self):
+            for i in range(100):
+                start = random.random()
+                end = random.random()
+                if start > end:
+                    start, end = end, start
+                value = random_float_between_noninclusive(start, end)
+
+                check the returned value
+  learner_created: false
+- name: tested_code.py
+  visible: true
+  text: |-
+    import random
+    import re
+
+
+    def random_not_42():
+        value = 42
+        while value == 42:
+            value = random.randint(-(2 ** 31), 2 ** 31 - 1)
+        return value
+
+
+    def find_foo(s):
+        return re.search(r"foo", s)
+
+
+    def random_float_between_inclusive(a, b):
+        return random.uniform(a, b)
+
+
+    def random_float_between_noninclusive(a, b):
+        if a == b:
+            raise ValueError("a must be different than b!")
+        result = a
+        while result == a or result == b:
+            result = random.uniform(a, b)
+        return result
+  learner_created: false
+- name: tests.py
+  visible: false
+  text: |
+    from custom_test_helpers import run_test_case_tests, inspect_assertions, \
+        normalize_call_args, check_used_only_assertions
+    from test_helper import passed, failed, run_common_tests, import_task_file, \
+        test_answer_placeholders_text_deleted
+
+
+    import itertools
+    import unittest.mock
+    from tested_code import find_foo
+    import re
+
+
+    def check_test_not_42():
+        has_failed = False
+
+        task_module = import_task_file()
+        test_case_class = inspect_assertions(task_module.TestRandomNot42)
+        test_result = run_test_case_tests(test_case_class)
+
+        if not test_result.wasSuccessful():
+            failed("at least one test failed")
+            has_failed = True
+
+        if not check_used_only_assertions(test_case_class, ["assertNotEqual"]):
+            has_failed = True
+
+
+        mock_random_not_42 = unittest.mock.Mock(return_value=42)
+        with unittest.mock.patch('tested_code.random_not_42', mock_random_not_42):
+            task_module = import_task_file()
+            test_result = run_test_case_tests(task_module.TestRandomNot42)
+            if test_result.wasSuccessful():
+                failed("tests passed with broken implementation")
+                has_failed = True
+
+        if not has_failed:
+            passed()
+
+
+    def check_test_find_foo():
+        has_failed = False
+
+        task_module = import_task_file()
+        test_case_class = inspect_assertions(task_module.TestFindFoo)
+        test_result = run_test_case_tests(test_case_class)
+
+        if not test_result.wasSuccessful():
+            failed("at least one test failed")
+            has_failed = True
+
+        if not check_used_only_assertions(
+                test_case_class,
+                ["assertIsNone", "assertIsNotNone"],
+        ):
+            has_failed = True
+
+        # check that all of the substrings were tested
+        mock_find_foo = unittest.mock.Mock(wraps=find_foo)
+        with unittest.mock.patch('tested_code.find_foo', mock_find_foo):
+            task_module = import_task_file()
+            test_case_class = task_module.TestFindFoo
+            run_test_case_tests(test_case_class)
+
+            normalized_call_args = [
+                normalize_call_args(call_args, func=find_foo)
+                for call_args in mock_find_foo.call_args_list
+            ]
+            for substring in itertools.chain(
+                    ["foo"],
+                    test_case_class.strings_with_foo,
+                    test_case_class.strings_without_foo
+            ):
+                if ((substring,), {}) not in normalized_call_args:
+                    failed("substring \"{}\" not tested".format(substring))
+                    has_failed = True
+
+        # check with broken find_foo()
+        def find_fo(s):
+            return re.search(r"fo", s)
+        for broken_find_fo in [
+            find_fo,
+            lambda s: None,
+            lambda s: 0,
+        ]:
+            with unittest.mock.patch('tested_code.find_foo', broken_find_fo):
+                task_module = import_task_file()
+                test_result = run_test_case_tests(task_module.TestFindFoo)
+                if test_result.wasSuccessful():
+                    failed("tests passed with broken implementation")
+                    has_failed = True
+
+        if not has_failed:
+            passed()
+
+
+    def check_test_random_float_between_inclusive():
+        has_failed = False
+
+        task_module = import_task_file()
+        test_case_class = inspect_assertions(task_module.TestRandomFloatBetweenInclusive)
+        test_result = run_test_case_tests(test_case_class)
+
+        if not test_result.wasSuccessful():
+            failed("at least one test failed")
+            has_failed = True
+
+        if not check_used_only_assertions(
+                test_case_class,
+                ["assertGreaterEqual", "assertLessEqual"],
+        ):
+            has_failed = True
+
+        for broken_func in [
+            lambda a, b: a - 1,
+            lambda a, b: b + 1,
+        ]:
+            with unittest.mock.patch('tested_code.random_float_between_inclusive', broken_func):
+                task_module = import_task_file()
+                test_result = run_test_case_tests(task_module.TestRandomFloatBetweenInclusive)
+                if test_result.wasSuccessful():
+                    failed("tests passed with broken implementation")
+                    has_failed = True
+
+        if not has_failed:
+            passed()
+
+
+    def check_test_random_float_between_noninclusive():
+        has_failed = False
+
+        task_module = import_task_file()
+        test_case_class = inspect_assertions(task_module.TestRandomFloatBetweenNoninclusive)
+        test_result = run_test_case_tests(test_case_class)
+
+        if not test_result.wasSuccessful():
+            failed("at least one test failed")
+            has_failed = True
+
+        if not check_used_only_assertions(
+                test_case_class,
+                ["assertGreater", "assertLess"],
+        ):
+            has_failed = True
+
+        for broken_func in [
+            lambda a, b: a - 1,
+            lambda a, b: b + 1,
+            lambda a, b: a,
+            lambda a, b: b,
+        ]:
+            with unittest.mock.patch('tested_code.random_float_between_noninclusive', broken_func):
+                task_module = import_task_file()
+                test_result = run_test_case_tests(task_module.TestRandomFloatBetweenNoninclusive)
+                if test_result.wasSuccessful():
+                    failed("tests passed with broken implementation")
+                    has_failed = True
+
+        if not has_failed:
+            passed()
+
+
+    if __name__ == '__main__':
+        run_common_tests()
+        test_answer_placeholders_text_deleted()
+
+        check_test_not_42()
+        check_test_find_foo()
+        check_test_random_float_between_inclusive()
+        check_test_random_float_between_noninclusive()
+  learner_created: false
+status: Failed
+record: -1
